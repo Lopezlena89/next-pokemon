@@ -1,8 +1,11 @@
+const { version } = require('os')
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
   images:{
-    domains:['raw.githubusercontent.com']
+    domains:['raw.githubusercontent.com'],
+    unoptimized:true
   }
 }
 

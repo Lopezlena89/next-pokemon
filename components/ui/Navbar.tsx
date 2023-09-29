@@ -28,7 +28,7 @@ export const Navbar = () => {
         {/* <h2 style={{color:'white',fontSize:'1.5em'}}>P</h2>
         <h3 style={{color:'white'}}>okemon</h3> */}
         <Link href="/" style={{color:'white',fontSize:'1.5em'}}>P</Link>
-        <Link href="/" style={{color:'white'}}>okemon</Link>
+        <Link href="/" style={{color:'white'}}>okemon!</Link>
 
         <Spacer className="flex-1"/>
         <Link href="/favorites" style={{color:'white'}}>Favoritos</Link>
