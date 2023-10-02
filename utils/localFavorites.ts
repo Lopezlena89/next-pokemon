@@ -15,10 +15,10 @@ const toogleFavorite = ( id:number ) =>{
 
 const existInFavorites = (id:number):boolean =>{
 
-    if( typeof window === 'undefined')return false
+    if ( typeof window === 'undefined' ) return false;
 
     const favorites:number[] = JSON.parse(localStorage.getItem('favorites') || '[]' );
-
+    
     return favorites.includes( id );
 }
 

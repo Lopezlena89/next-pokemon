@@ -18,6 +18,7 @@ export const HomePage:NextPage<Props> = ({pokemons}) => {
             {
               pokemons.map((pokemon)=>(
                   <PokemonCard key={pokemon.id} pokemon={pokemon}/>
+
               ))
             }
           </div>

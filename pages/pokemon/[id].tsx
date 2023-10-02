@@ -1,11 +1,10 @@
-import { useState,useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import { GetStaticPaths, GetStaticProps, NextPage } from "next";
 import { Button, Card, CardBody, CardFooter, Image } from "@nextui-org/react";
 
-import confetti  from 'canvas-confetti';
 
-import { pokeApi } from "@/api";
+
 import { Layout } from "@/components/layouts";
 import { Pokemon } from "@/interfaces";
 import {getPokemonInfo, localFavorites}  from '../../utils'
@@ -13,27 +12,23 @@ import {getPokemonInfo, localFavorites}  from '../../utils'
 interface Props{
   pokemon:Pokemon
 
-}
-
-
+}   
 const PokemonPage:NextPage<Props> = ({pokemon}) => {
-  
-  const [isInFavorites, setIsInFavorites] = useState(localFavorites.existInFavorites(pokemon.id));
+
+  const [isInFavorites, setIsInFavorites] = useState(false);
+
+  useEffect(() => { 
+    const pokemonFavorite = localFavorites.existInFavorites(pokemon.id);
+    setIsInFavorites(pokemonFavorite)
+  }, [])
+
+ 
 
   const onToggleFavorite = () =>{
     localFavorites.toogleFavorite(pokemon.id);
     setIsInFavorites(!isInFavorites);
     if(isInFavorites) return;
-    confetti({
-      zIndex:999,
-      particleCount:100,
-      spread:160,
-      angle:-100,
-      origin:{
-        x:1,
-        y:0
-      }
-    })
+    
   }
 
   return (
@@ -61,7 +56,7 @@ const PokemonPage:NextPage<Props> = ({pokemon}) => {
                   <Button 
                     onClick={onToggleFavorite} 
                     className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"
-                    variant="ghost"
+                    
                     >
                     {isInFavorites ? 'En favoritos' : 'Guardar en favoritos'}
                   </Button>
@@ -108,18 +103,29 @@ export const getStaticPaths:GetStaticPaths = async(ctx) => {
   
   return {
     paths:pokemons151.map(id=>({params:{id}})),
-    fallback:false
+    fallback:'blocking'
   }
 }
 
 export const getStaticProps:GetStaticProps = async({params}) =>{
   
   const {id} = params as {id:string};
+
+  const pokemon = await getPokemonInfo(id);
   
+  if(!pokemon){
+    return {
+      redirect:{
+        destination:'/',  
+        permanent:false
+      }
+    }
+  }
   return{
     props:{
-      pokemon:await getPokemonInfo(id)
-    }
+      pokemon
+    },
+    revalidate: 86400
   }
 }
 export default PokemonPage;

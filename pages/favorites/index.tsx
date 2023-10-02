@@ -13,19 +13,14 @@ const FavoritesPage = () => {
   useEffect(() => {
     setFavoritesPokemons(localFavorites.pokemons());
   }, [])
-  
-
 
   return (
     <Layout title='Pokemons - Favoritos'>
-
       {
         favoritePokemons.length === 0
         ? (<NoFavorites/>)
         : (<FavoritePokemons pokemons={favoritePokemons}/>)
       }
-
-      
     </Layout>
   )
 }

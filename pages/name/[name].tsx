@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { GetStaticPaths, GetStaticProps, NextPage } from "next";
 import { Button, Card, CardBody, CardFooter, Image } from "@nextui-org/react";
 
-import confetti  from 'canvas-confetti';
+
 
 import { pokeApi } from "@/api";
 import { Layout } from "@/components/layouts";
@@ -18,23 +18,19 @@ interface Props{
 
 const PokemonByNamePage:NextPage<Props> = ({pokemon}) => {
 
+  const [isInFavorites, setIsInFavorites] = useState(false);
+
+  useEffect(() => {
+    const nuevo = localFavorites.existInFavorites(pokemon.id);
+    setIsInFavorites(nuevo)
+  }, [])
   
-  const [isInFavorites, setIsInFavorites] = useState(localFavorites.existInFavorites(pokemon.id));
 
   const onToggleFavorite = () =>{
     localFavorites.toogleFavorite(pokemon.id);
     setIsInFavorites(!isInFavorites);
     if(isInFavorites) return;
-    confetti({
-      zIndex:999,
-      particleCount:100,
-      spread:160,
-      angle:-100,
-      origin:{
-        x:1,
-        y:0
-      }
-    })
+    
   }
 
   return (
@@ -62,7 +58,6 @@ const PokemonByNamePage:NextPage<Props> = ({pokemon}) => {
                   <Button 
                     onClick={onToggleFavorite} 
                     className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"
-                    variant="ghost"
                     >
                     {isInFavorites ? 'En favoritos' : 'Guardar en favoritos'}
                   </Button>
@@ -115,19 +110,27 @@ export const getStaticPaths:GetStaticPaths = async(ctx) =>{
                 name
             }
         })),
-        fallback:false
+        fallback:'blocking'
       }
 }
 
 export const getStaticProps:GetStaticProps = async({params}) =>{
     const {name} = params as {name:string};
-  
     
+    const pokemon = await getPokemonInfo(name);
 
-
+    if(!pokemon){
+      return {
+        redirect:{
+          destination:'/',
+          permanent:false
+        }
+      }
+    }
+  
     return{
       props:{
-        pokemon:await getPokemonInfo(name)
+        pokemon
       }
     }
 }
